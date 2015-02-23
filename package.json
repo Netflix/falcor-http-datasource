@@ -1,0 +1,26 @@
+{
+  "name": "falcor-browser",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Netflix/falcor-browser.git"
+  },
+  "keywords": [
+    "Falcor",
+    "Browser"
+  ],
+  "dependencies": {
+    "falcor": "git+ssh://git@github.com/Netflix/falcor.git#v0.0.3"
+  },
+  "author": "Michael Brady Paulson <michael.b.paulson@gmail.com>",
+  "license": "ALV2",
+  "bugs": {
+    "url": "https://github.com/Netflix/falcor-browser/issues"
+  },
+  "homepage": "https://github.com/Netflix/falcor-browser"
+}

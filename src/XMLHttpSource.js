@@ -12,11 +12,10 @@ XMLHttpSource.prototype = {
      */
     get: function (pathSet) {
         var method = 'GET';
-        var path = 'path=' + (pathSet.map(function (path) {
-            // Bug in encoding, single quotes not encoded
-            return encodeURIComponent(JSON.stringify(path));
-        })).join('&path=');
-        var config = buildQueryObject(this._jsongUrl, method, path);
+        var config = buildQueryObject(this._jsongUrl, method, {
+            path: pathSet,
+            method: 'get'
+        });
         return request(method, config);
     },
     /**

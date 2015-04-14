@@ -21,8 +21,13 @@ XMLHttpSource.prototype = {
     /**
      * @inheritDoc DataSource#set
      */
-    set: function () {
-        // TODO: What to send what to send
+    set: function (jsongEnv) {
+        var method = 'POST';
+        var config = buildQueryObject(this._jsongUrl, method, {
+            path: jsongEnv,
+            method: 'set'
+        });
+        return request(method, config);
     },
 
     /**

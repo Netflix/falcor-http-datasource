@@ -1,5 +1,5 @@
 var falcor = require('falcor');
-var Observable = falcor.Observable;
+Observable = falcor.Observable;
 
 function XMLHttpSource(jsongUrl, timeout) {
     this._jsongUrl = jsongUrl;
@@ -116,16 +116,21 @@ function _handleXhrError(observer, textStatus, errorThrown) {
 function onXhrLoad(observer, xhr) {
     var status,
         responseData,
+        repsonseType,
         responseObject;
 
     // If there's no observer, the request has been (or is being) cancelled.
     if (xhr && observer) {
         status = xhr.status;
-        responseData = xhr.responseText;
+        responseType = xhr.responseType;
 
         if (status >= 200 && status <= 399) {
             try {
-                responseData = JSON.parse(responseData || '');
+                if (responseType === 'text') {
+                    responseData = JSON.parse(xhr.responseText || '');
+                } else {
+                    responseData = xhr.response;
+                }
             } catch (e) {
                 _handleXhrError(observer, 'invalid json', e);
             }
@@ -175,5 +180,4 @@ function buildQueryObject(url, method, queryData) {
 
     return data;
 }
-
 module.exports = XMLHttpSource;

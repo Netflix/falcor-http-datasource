@@ -1,6 +1,6 @@
 {
   "name": "falcor-browser",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "src/XMLHttpSource.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "Browser"
   ],
   "dependencies": {
-    "falcor": "git+ssh://git@github.com/Netflix/falcor.git#v0.0.7"
+    "falcor": "git+ssh://git@github.com/Netflix/falcor.git#v0.0.9"
   },
   "author": "Michael Brady Paulson <michael.b.paulson@gmail.com>",
   "license": "ALV2",

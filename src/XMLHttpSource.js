@@ -133,8 +133,10 @@ function onXhrLoad(observer, xhr) {
             try {
                 if (responseType === 'text') {
                     responseData = JSON.parse(xhr.responseText || '');
-                } else {
+                } else if(typeof xhr.response !== "undefined") {
                     responseData = xhr.response;
+                } else if(typeof xhr.responseText !== "undefined") {
+                    responseData = JSON.parse(xhr.responseText || '');
                 }
             } catch (e) {
                 _handleXhrError(observer, 'invalid json', e);

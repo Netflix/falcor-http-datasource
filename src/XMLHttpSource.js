@@ -1,5 +1,9 @@
+'use strict';
 var falcor = require('falcor');
-Observable = falcor.Observable;
+
+var request = require('./request');
+var buildQueryObject = require('./buildQueryObject');
+var isArray = Array.isArray;
 
 function XMLHttpSource(jsongUrl, timeout) {
     this._jsongUrl = jsongUrl;
@@ -46,13 +50,13 @@ XMLHttpSource.prototype = {
         queryData.push('method=call');
         queryData.push('callPath=' + encodeURIComponent(JSON.stringify(callPath)));
 
-        if (Array.isArray(args)) {
+        if (isArray(args)) {
             args.forEach(function (value) {
                 queryData.push('param=' + encodeURIComponent(JSON.stringify(value)));
             });
         }
 
-        if (Array.isArray(pathSuffix)) {
+        if (isArray(pathSuffix)) {
             pathSuffix.forEach(function (value) {
                 queryData.push('pathSuffix=' + encodeURIComponent(JSON.stringify(value)));
             });

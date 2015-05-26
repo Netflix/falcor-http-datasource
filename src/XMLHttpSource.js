@@ -50,13 +50,13 @@ XMLHttpSource.prototype = {
         queryData.push('method=call');
         queryData.push('callPath=' + encodeURIComponent(JSON.stringify(callPath)));
 
-        if (isArray(args)) {
+        if (Array.isArray(args)) {
             args.forEach(function (value) {
                 queryData.push('param=' + encodeURIComponent(JSON.stringify(value)));
             });
         }
 
-        if (isArray(pathSuffix)) {
+        if (Array.isArray(pathSuffix)) {
             pathSuffix.forEach(function (value) {
                 queryData.push('pathSuffix=' + encodeURIComponent(JSON.stringify(value)));
             });

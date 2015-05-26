@@ -38,7 +38,7 @@ XMLHttpSource.prototype = {
      * @inheritDoc DataSource#call
      */
     call: function (callPath, args, pathSuffix, paths) {
-        var method = 'GET';
+        var method = 'POST';
         var queryData = [];
         args = args || [];
         pathSuffix = pathSuffix || [];

@@ -15,6 +15,7 @@ function request(method, options) {
             responseType: 'json'
         };
         var xhr,
+            progressObserver,
             isDone,
             headers,
             header,
@@ -52,6 +53,8 @@ function request(method, options) {
         // Content
         config.hasContent = config.body !== undefined;
 
+        // Progress
+        progressObserver = config.progressObserver;
 
         // Sets timeout information
         xhr.timeout = config.timeout;
@@ -77,6 +80,12 @@ function request(method, options) {
                     isDone = true;
                 };
 
+                // Progress
+                if (progressObserver) {
+                    xhr.onprogress = function onprogress(e) {
+                        progressObserver.onNext(e);
+                    };
+                }
 
                 // Error
                 xhr.onerror = function onerror(e) {
@@ -154,6 +163,9 @@ function onXhrLoad(observer, progressObserver, xhr, status, e) {
         responseData = ('response' in xhr) ? xhr.response : xhr.responseText;
 
         // If there is a progress observer
+        if (progressObserver) {
+            _handleXhrComplete(progressObserver, e);
+        }
 
         //
         if ((status >= 200 && status <= 399)) {
@@ -186,6 +198,9 @@ function onXhrLoad(observer, progressObserver, xhr, status, e) {
 }//onXhrLoad
 
 function onXhrError(observer, progressObserver, xhr, status, e) {
+    if (progressObserver) {
+        _handleXhrError(progressObserver, xhr, e);
+    }
     _handleXhrError(observer, status || xhr.statusText || 'request error', e);
 }
 

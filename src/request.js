@@ -42,25 +42,11 @@ function request(method, options) {
           config.headers['X-Requested-With'] = 'XMLHttpRequest';
         }
 
-        // Fills the request headers
-        headers = config.headers;
-        for (header in headers) {
-            if (hasOwnProp.call(headers, header)) {
-                xhr.setRequestHeader(header, headers[header]);
-            }
-        }
-
         // Content
         config.hasContent = config.body !== undefined;
 
         // Progress
         progressObserver = config.progressObserver;
-
-        // Sets timeout information
-        xhr.timeout = config.timeout;
-
-        // Anything but explicit false results in true.
-        xhr.withCredentials = config.withCredentials !== false;
 
 
         try {
@@ -71,6 +57,19 @@ function request(method, options) {
                 xhr.open(method || config.method, config.url, config.async);
             }
 
+            // Sets timeout information
+            xhr.timeout = config.timeout;
+
+            // Anything but explicit false results in true.
+            xhr.withCredentials = config.withCredentials !== false;
+
+            // Fills the request headers
+            headers = config.headers;
+            for (header in headers) {
+                if (hasOwnProp.call(headers, header)) {
+                    xhr.setRequestHeader(header, headers[header]);
+                }
+            }
 
             // Sends the request.
             if (!!xhr.upload || (!('withCredentials' in xhr) && !!global.XDomainRequest)) {

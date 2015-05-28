@@ -42,9 +42,6 @@ function request(method, options) {
           config.headers['X-Requested-With'] = 'XMLHttpRequest';
         }
 
-        // Content
-        config.hasContent = config.body !== undefined;
-
         // Progress
         progressObserver = config.progressObserver;
 
@@ -118,7 +115,7 @@ function request(method, options) {
             };
 
             // Send Request
-            xhr.send(config.hasContent ? config.body : null);
+            xhr.send(config.data);
 
         } catch (e) {
             observer.onError(e);

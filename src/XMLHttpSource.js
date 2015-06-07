@@ -66,6 +66,8 @@ XMLHttpSource.prototype = {
         return request(method, config);
     }
 };
-
-
+// ES6 modules
+XMLHttpSource.XMLHttpSource = XMLHttpSource;
+XMLHttpSource['default'] = XMLHttpSource;
+// commonjs
 module.exports = XMLHttpSource;

@@ -152,13 +152,12 @@ function _handleXhrError(observer, textStatus, errorThrown) {
 
 function onXhrLoad(observer, progressObserver, xhr, status, e) {
     var responseData,
-        responseObject,
-        responseType;
+        responseObject;
+        // responseType;
 
     // If there's no observer, the request has been (or is being) cancelled.
     if (xhr && observer) {
         responseData = ('response' in xhr) ? xhr.response : xhr.responseText;
-        responseType = xhr.responseType;
 
         // If there is a progress observer
         if (progressObserver) {
@@ -168,14 +167,7 @@ function onXhrLoad(observer, progressObserver, xhr, status, e) {
         //
         if ((status >= 200 && status <= 399)) {
             try {
-                // shouldn't this be type json
-                if (responseType === 'text') {
-                    responseData = JSON.parse(xhr.responseText || '');
-                } else if (typeof xhr.response !== 'undefined') {
-                    responseData = xhr.response;
-                } else if (typeof xhr.responseText !== 'undefined') {
-                    responseData = JSON.parse(xhr.responseText || '');
-                }
+                responseData = JSON.parse(responseData || '');
             } catch (e) {
                 _handleXhrError(observer, 'invalid json', e);
             }

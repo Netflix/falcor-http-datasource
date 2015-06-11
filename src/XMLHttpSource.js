@@ -17,7 +17,7 @@ XMLHttpSource.prototype = {
     get: function (pathSet) {
         var method = 'GET';
         var config = buildQueryObject(this._jsongUrl, method, {
-            path: pathSet,
+            paths: pathSet,
             method: 'get'
         });
         return request(method, config);
@@ -28,7 +28,7 @@ XMLHttpSource.prototype = {
     set: function (jsongEnv) {
         var method = 'POST';
         var config = buildQueryObject(this._jsongUrl, method, {
-            path: jsongEnv,
+            jsong: jsongEnv,
             method: 'set'
         });
         return request(method, config);
@@ -43,24 +43,12 @@ XMLHttpSource.prototype = {
         args = args || [];
         pathSuffix = pathSuffix || [];
         paths = paths || [];
-        paths.forEach(function (path) {
-            queryData.push('path=' + encodeURIComponent(JSON.stringify(path)));
-        });
 
         queryData.push('method=call');
         queryData.push('callPath=' + encodeURIComponent(JSON.stringify(callPath)));
-
-        if (Array.isArray(args)) {
-            args.forEach(function (value) {
-                queryData.push('param=' + encodeURIComponent(JSON.stringify(value)));
-            });
-        }
-
-        if (Array.isArray(pathSuffix)) {
-            pathSuffix.forEach(function (value) {
-                queryData.push('pathSuffix=' + encodeURIComponent(JSON.stringify(value)));
-            });
-        }
+        queryData.push('arguments=' + encodeURIComponent(JSON.stringify(args)));
+        queryData.push('pathSuffixes=' + encodeURIComponent(JSON.stringify(pathSuffix)));
+        queryData.push('paths=' + encodeURIComponent(JSON.stringify(paths)));
 
         var config = buildQueryObject(this._jsongUrl, method, queryData.join('&'));
         return request(method, config);

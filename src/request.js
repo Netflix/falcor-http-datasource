@@ -5,9 +5,9 @@ var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;
 
 function request(method, options, context) {
-    return Observable.create(function(observer) {
+    return Observable.create(function requestObserver(observer) {
         var config = {
-            method: 'GET',
+            method: method || 'GET',
             crossDomain: false,
             async: true,
             headers: {},
@@ -25,24 +25,28 @@ function request(method, options, context) {
             }
         }
 
-        try {
-            xhr = config.crossDomain ? getCORSRequest() : getXMLHttpRequest();
-        } catch (err) {
-            observer.onError(err);
-        }
-
         // Add request with Headers
         if (!config.crossDomain && !config.headers['X-Requested-With']) {
           config.headers['X-Requested-With'] = 'XMLHttpRequest';
         }
 
+        // allow the user to mutate the config open
+        if (context.onBeforeRequest != null) {
+            context.onBeforeRequest(config);
+        }
 
+        // create xhr
+        try {
+            xhr = config.crossDomain ? getCORSRequest() : getXMLHttpRequest();
+        } catch (err) {
+            observer.onError(err);
+        }
         try {
             // Takes the url and opens the connection
             if (config.user) {
-                xhr.open(method || config.method, config.url, config.async, config.user, config.password);
+                xhr.open(config.method, config.url, config.async, config.user, config.password);
             } else {
-                xhr.open(method || config.method, config.url, config.async);
+                xhr.open(config.method, config.url, config.async);
             }
 
             // Sets timeout information
@@ -95,9 +99,6 @@ function request(method, options, context) {
             };
 
             // Send Request
-            if (context.onBeforeRequest != null) {
-                context.onBeforeRequest(config);
-            }
             xhr.send(config.data);
 
         } catch (e) {

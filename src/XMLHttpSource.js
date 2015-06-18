@@ -31,50 +31,63 @@ XMLHttpSource.prototype = {
     // because javascript
     constructor: XMLHttpSource,
     /**
+     * buildQueryObject helper
+     */
+    buildQueryObject: buildQueryObject,
+
+    /**
      * @inheritDoc DataSource#get
      */
-    get: function (pathSet) {
-        var self = this;
+    get: function httpSourceGet(pathSet) {
         var method = 'GET';
-        var queryObject = buildQueryObject(this._jsongUrl, method, {
+        var queryObject = this.buildQueryObject(this._jsongUrl, method, {
             path: pathSet,
             method: 'get'
         });
         var config = simpleExtend(queryObject, this._config);
-        return request(method, config, self);
+        // pass context for onBeforeRequest callback
+        var context = this;
+        return request(method, config, context);
     },
+
     /**
      * @inheritDoc DataSource#set
      */
-    set: function (jsongEnv) {
+    set: function httpSourceSet(jsongEnv) {
         var method = 'POST';
-        var queryObject = buildQueryObject(this._jsongUrl, method, {
+        var queryObject = this.buildQueryObject(this._jsongUrl, method, {
             jsong: jsongEnv,
             method: 'set'
         });
         var config = simpleExtend(queryObject, this._config);
-        return request(method, config);
+        // pass context for onBeforeRequest callback
+        var context = this;
+        return request(method, config, context);
+
     },
 
     /**
      * @inheritDoc DataSource#call
      */
-    call: function (callPath, args, pathSuffix, paths) {
-        var method = 'POST';
-        var queryData = [];
+    call: function httpSourceCall(callPath, args, pathSuffix, paths) {
+        // arguments defaults
         args = args || [];
         pathSuffix = pathSuffix || [];
         paths = paths || [];
 
+        var method = 'POST';
+        var queryData = [];
         queryData.push('method=call');
         queryData.push('callPath=' + encodeURIComponent(JSON.stringify(callPath)));
         queryData.push('arguments=' + encodeURIComponent(JSON.stringify(args)));
         queryData.push('pathSuffixes=' + encodeURIComponent(JSON.stringify(pathSuffix)));
         queryData.push('paths=' + encodeURIComponent(JSON.stringify(paths)));
 
-        var queryObject = buildQueryObject(this._jsongUrl, method, queryData.join('&'));
+        var queryObject = this.buildQueryObject(this._jsongUrl, method, queryData.join('&'));
         var config = simpleExtend(queryObject, this._config);
-        return request(method, config);
+        // pass context for onBeforeRequest callback
+        var context = this;
+        return request(method, config, context);
     }
 };
 // ES6 modules

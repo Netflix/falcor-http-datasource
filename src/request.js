@@ -4,30 +4,24 @@ var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;
 
-function request(method, options) {
+function request(method, options, context) {
     return Observable.create(function(observer) {
         var config = {
             method: 'GET',
             crossDomain: false,
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             async: true,
             headers: {},
             responseType: 'json'
         };
         var xhr,
-            progressObserver,
             isDone,
             headers,
             header,
             prop;
 
-        if (typeof options === 'string') {
-            config.url = options;
-        } else {
-            for (prop in options) {
-                if (hasOwnProp.call(options, prop)) {
-                    config[prop] = options[prop];
-                }
+        for (prop in options) {
+            if (hasOwnProp.call(options, prop)) {
+                config[prop] = options[prop];
             }
         }
 
@@ -41,9 +35,6 @@ function request(method, options) {
         if (!config.crossDomain && !config.headers['X-Requested-With']) {
           config.headers['X-Requested-With'] = 'XMLHttpRequest';
         }
-
-        // Progress
-        progressObserver = config.progressObserver;
 
 
         try {
@@ -68,53 +59,45 @@ function request(method, options) {
                 }
             }
 
-            // Sends the request.
-            if (!!xhr.upload || (!('withCredentials' in xhr) && !!global.XDomainRequest)) {
-                // Link the response methods
-                xhr.onload = function onload(e) {
-                    onXhrLoad(observer, progressObserver, xhr, xhr.status, e);
-                    isDone = true;
-                };
-
-                // Progress
-                if (progressObserver) {
-                    xhr.onprogress = function onprogress(e) {
-                        progressObserver.onNext(e);
-                    };
-                }
-
-                // Error
-                xhr.onerror = function onerror(e) {
-                    onXhrError(observer, progressObserver, xhr, xhr.status, e);
-                    isDone = true;
-                };
-
-                // Abort
-                xhr.onabort = function onabort(e) {
-                    onXhrError(observer, progressObserver, xhr, xhr.status, e);
-                    isDone = true;
-                };
-
-            // Legacy
-            } else {
-
-                xhr.onreadystatechange = function onreadystatechange(e) {
-                    // Complete
-                    if (xhr.readyState === 4) {
-                        var status = xhr.status === 1223 ? 204 : xhr.status;
-                        onXhrLoad(observer, config.progressObserver, xhr, status, e);
-                        isDone = true;
+            if (config.responseType) {
+                try {
+                    xhr.responseType = config.responseType;
+                } catch (e) {
+                    // WebKit added support for the json responseType value on 09/03/2013
+                    // https://bugs.webkit.org/show_bug.cgi?id=73648. Versions of Safari prior to 7 are
+                    // known to throw when setting the value "json" as the response type. Other older
+                    // browsers implementing the responseType
+                    //
+                    // The json response type can be ignored if not supported, because JSON payloads are
+                    // parsed on the client-side regardless.
+                    if (responseType !== 'json') {
+                        throw e;
                     }
-                };
+                }
             }
+
+            xhr.onreadystatechange = function onreadystatechange(e) {
+                // Complete
+                if (xhr.readyState === 4) {
+                    if (!isDone) {
+                        isDone = true;
+                        onXhrLoad(observer, xhr, status, e);
+                    }
+                }
+            };
 
             // Timeout
             xhr.ontimeout = function ontimeout(e) {
-                onXhrError(observer, progressObserver, xhr, 'timeout error', e);
-                isDone = true;
+                if (!isDone) {
+                    isDone = true;
+                    onXhrError(observer, xhr, 'timeout error', e);
+                }
             };
 
             // Send Request
+            if (context.onBeforeRequest != null) {
+                context.onBeforeRequest(config);
+            }
             xhr.send(config.data);
 
         } catch (e) {
@@ -124,18 +107,11 @@ function request(method, options) {
         return function dispose() {
             // Doesn't work in IE9
             if (!isDone && xhr.readyState !== 4) {
+                isDone = true;
                 xhr.abort();
             }
         };//Dispose
     });
-}
-
-/*
- * General handling of a successfully completed request (that had a 200 response code)
- */
-function _handleXhrComplete(observer, data) {
-    observer.onNext(data);
-    observer.onCompleted();
 }
 
 /*
@@ -150,29 +126,29 @@ function _handleXhrError(observer, textStatus, errorThrown) {
     observer.onError(errorThrown);
 }
 
-function onXhrLoad(observer, progressObserver, xhr, status, e) {
+function onXhrLoad(observer, xhr, status, e) {
     var responseData,
         responseObject;
         // responseType;
 
     // If there's no observer, the request has been (or is being) cancelled.
     if (xhr && observer) {
+        // responseText is the old-school way of retrieving response (supported by IE8 & 9)
+        // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
         responseData = ('response' in xhr) ? xhr.response : xhr.responseText;
 
-        // If there is a progress observer
-        if (progressObserver) {
-            _handleXhrComplete(progressObserver, e);
-        }
+        // normalize IE9 bug (http://bugs.jquery.com/ticket/1450)
+        var status = (xhr.status === 1223) ? 204 : xhr.status;
 
-        //
-        if ((status >= 200 && status <= 399)) {
+        if (status >= 200 && status <= 399) {
             try {
                 responseData = JSON.parse(responseData || '');
             } catch (e) {
                 _handleXhrError(observer, 'invalid json', e);
             }
-
-            return _handleXhrComplete(observer, responseData);
+            observer.onNext(responseData);
+            observer.onCompleted();
+            return;
 
         } else if (status === 401 || status === 403 || status === 407) {
 
@@ -194,10 +170,7 @@ function onXhrLoad(observer, progressObserver, xhr, status, e) {
     }//if
 }//onXhrLoad
 
-function onXhrError(observer, progressObserver, xhr, status, e) {
-    if (progressObserver) {
-        _handleXhrError(progressObserver, xhr, e);
-    }
+function onXhrError(observer, xhr, status, e) {
     _handleXhrError(observer, status || xhr.statusText || 'request error', e);
 }
 

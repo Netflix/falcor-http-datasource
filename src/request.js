@@ -129,11 +129,12 @@ function _handleXhrError(observer, textStatus, errorThrown) {
 
 function onXhrLoad(observer, xhr, status, e) {
   var responseData,
-    responseObject;
-    // responseType;
+    responseObject,
+    responseType;
 
   // If there's no observer, the request has been (or is being) cancelled.
   if (xhr && observer) {
+    responseType = xhr.responseType;
     // responseText is the old-school way of retrieving response (supported by IE8 & 9)
     // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
     responseData = ('response' in xhr) ? xhr.response : xhr.responseText;
@@ -143,7 +144,9 @@ function onXhrLoad(observer, xhr, status, e) {
 
     if (status >= 200 && status <= 399) {
       try {
-        responseData = JSON.parse(responseData || '');
+        if (responseType !== 'json' && typeof responseData === 'string') {
+          responseData = JSON.parse(responseData || '');
+        }
       } catch (e) {
         _handleXhrError(observer, 'invalid json', e);
       }

@@ -81,7 +81,7 @@ function request(method, options, context) {
                 if (xhr.readyState === 4) {
                     if (!isDone) {
                         isDone = true;
-                        onXhrLoad(observer, xhr, status, e, context);
+                        onXhrLoad(observer, xhr, status, e);
                     }
                 }
             };
@@ -126,7 +126,7 @@ function _handleXhrError(observer, textStatus, errorThrown) {
     observer.onError(errorThrown);
 }
 
-function onXhrLoad(observer, xhr, status, e, context) {
+function onXhrLoad(observer, xhr, status, e) {
     var responseData,
         responseObject;
         // responseType;
@@ -142,7 +142,7 @@ function onXhrLoad(observer, xhr, status, e, context) {
 
         if (status >= 200 && status <= 399) {
             try {
-                responseData = context.responseTransform(responseData || '');
+                responseData = JSON.parse(responseData || '');
             } catch (e) {
                 _handleXhrError(observer, 'invalid json', e);
             }

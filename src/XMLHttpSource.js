@@ -41,7 +41,7 @@ XMLHttpSource.prototype = {
   get: function httpSourceGet(pathSet) {
     var method = 'GET';
     var queryObject = this.buildQueryObject(this._jsongUrl, method, {
-      path: pathSet,
+      paths: pathSet,
       method: 'get'
     });
     var config = simpleExtend(queryObject, this._config);

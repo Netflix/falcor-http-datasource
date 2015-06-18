@@ -5,32 +5,54 @@ var request = require('./request');
 var buildQueryObject = require('./buildQueryObject');
 var isArray = Array.isArray;
 
-function XMLHttpSource(jsongUrl, timeout) {
+function simpleExtend(obj, obj2) {
+    var prop;
+    for (prop in obj2) {
+        obj[prop] = obj2[prop];
+    }
+    return obj;
+}
+
+function XMLHttpSource(jsongUrl, config) {
     this._jsongUrl = jsongUrl;
-    this._timeout = timeout || 15000;
+    if (typeof config === 'number') {
+        var newConfig = {
+            timeout: config
+        };
+        config = newConfig;
+    }
+    this._config = simpleExtend({
+        timeout: 15000,
+        headers: {}
+    }, config || {});
 }
 
 XMLHttpSource.prototype = {
+    // because javascript
+    constructor: XMLHttpSource,
     /**
      * @inheritDoc DataSource#get
      */
     get: function (pathSet) {
+        var self = this;
         var method = 'GET';
-        var config = buildQueryObject(this._jsongUrl, method, {
-            paths: pathSet,
+        var queryObject = buildQueryObject(this._jsongUrl, method, {
+            path: pathSet,
             method: 'get'
         });
-        return request(method, config);
+        var config = simpleExtend(queryObject, this._config);
+        return request(method, config, self);
     },
     /**
      * @inheritDoc DataSource#set
      */
     set: function (jsongEnv) {
         var method = 'POST';
-        var config = buildQueryObject(this._jsongUrl, method, {
+        var queryObject = buildQueryObject(this._jsongUrl, method, {
             jsong: jsongEnv,
             method: 'set'
         });
+        var config = simpleExtend(queryObject, this._config);
         return request(method, config);
     },
 
@@ -50,7 +72,8 @@ XMLHttpSource.prototype = {
         queryData.push('pathSuffixes=' + encodeURIComponent(JSON.stringify(pathSuffix)));
         queryData.push('paths=' + encodeURIComponent(JSON.stringify(paths)));
 
-        var config = buildQueryObject(this._jsongUrl, method, queryData.join('&'));
+        var queryObject = buildQueryObject(this._jsongUrl, method, queryData.join('&'));
+        var config = simpleExtend(queryObject, this._config);
         return request(method, config);
     }
 };

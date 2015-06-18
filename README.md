@@ -20,15 +20,15 @@ export class AppSource extends XMLHttpSource {
   }
 
   get(...args) {
-    // returns an Observable if you wanted to map/filer/etc
+    // returns an Observable if you wanted to map/filter/reduce/etc
     return super.get(...args)
   }
   set(...args) {
-    // returns an Observable if you wanted to map/filer/etc
+    // returns an Observable if you wanted to map/filter/reduce/etc
     return super.set(...args)
   }
   call(...args) {
-    // returns an Observable if you wanted to map/filer/etc
+    // returns an Observable if you wanted to map/filter/reduce/etc
     return super.call(...args)
   }
 

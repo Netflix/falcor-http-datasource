@@ -1,6 +1,6 @@
 {
   "name": "falcor-browser",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "This package contains falcor components for use in browsers.",
   "main": "src/XMLHttpSource.js",
   "homepage": "https://github.com/Netflix/falcor-browser",
@@ -23,7 +23,6 @@
     "Browser"
   ],
   "dependencies": {
-    "falcor": "git+ssh://git@github.com/Netflix/falcor.git",
     "rx": "2.5.3"
   },
   "license": "ALV2",

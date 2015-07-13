@@ -1,5 +1,6 @@
 'use strict';
-var Observable = require('rx/dist/rx').Observable;
+var Rx = require("rx/dist/rx") && require("rx/dist/rx.aggregates") && require("rx/dist/rx.binding");
+var Observable = Rx.Observable;
 var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;

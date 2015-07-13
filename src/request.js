@@ -1,8 +1,25 @@
 'use strict';
-var Observable = require('falcor').Observable;
 var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;
+
+function Observable() {}
+
+Observable.create = function(subscribe) {
+    var o = new Observable();
+    o.subscribe = function(observer) {
+        var s = subscribe(observer);
+        if (typeof s === 'function') {
+            return {
+                dispose: s
+            };
+        }
+        else {
+            return s;
+        }
+    }
+    return o;
+}
 
 function request(method, options, context) {
   return Observable.create(function requestObserver(observer) {

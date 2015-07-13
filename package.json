@@ -6,24 +6,20 @@
   "homepage": "https://github.com/Netflix/falcor-browser",
   "author": {
     "name": "Netflix",
-    "url": "https://github.com/Netflix/falcor-browser/authors.txt"
+    "url": "https://github.com/Netflix/falcor/authors.txt"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Netflix/falcor-browser.git"
+    "url": "git://github.com/Netflix/falcor-browser.git"
   },
   "licenses": [
     {
       "type": "Apache License, Version 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
-  ],  
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/Netflix/falcor-browser.git"
   },
   "keywords": [
     "Falcor",
@@ -32,10 +28,8 @@
   "dependencies": {
     "falcor": "git+ssh://git@github.com/Netflix/falcor.git"
   },
-  "author": "Michael Brady Paulson <michael.b.paulson@gmail.com>",
   "license": "ALV2",
   "bugs": {
     "url": "https://github.com/Netflix/falcor-browser/issues"
-  },
-  "homepage": "https://github.com/Netflix/falcor-browser"
+  }
 }

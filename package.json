@@ -1,6 +1,6 @@
 {
   "name": "falcor-browser",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "description": "This package contains falcor components for use in browsers.",
   "main": "src/XMLHttpSource.js",
   "homepage": "https://github.com/Netflix/falcor-browser",
@@ -17,7 +17,7 @@
       "type": "Apache License, Version 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
-  ],  
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,8 +1,25 @@
 'use strict';
-var Observable = require('falcor').Observable;
 var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;
+
+function Observable() {}
+
+Observable.create = function(subscribe) {
+    var o = new Observable();
+    o.subscribe = function(observer) {
+        var s = subscribe(observer);
+        if (typeof s === 'function') {
+            return {
+                dispose: s
+            };
+        }
+        else {
+            return s;
+        }
+    }
+    return o;
+}
 
 function request(method, options, context) {
   return Observable.create(function requestObserver(observer) {
@@ -129,11 +146,12 @@ function _handleXhrError(observer, textStatus, errorThrown) {
 
 function onXhrLoad(observer, xhr, status, e) {
   var responseData,
-    responseObject;
-    // responseType;
+    responseObject,
+    responseType;
 
   // If there's no observer, the request has been (or is being) cancelled.
   if (xhr && observer) {
+    responseType = xhr.responseType;
     // responseText is the old-school way of retrieving response (supported by IE8 & 9)
     // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
     responseData = ('response' in xhr) ? xhr.response : xhr.responseText;
@@ -143,7 +161,9 @@ function onXhrLoad(observer, xhr, status, e) {
 
     if (status >= 200 && status <= 399) {
       try {
-        responseData = JSON.parse(responseData || '');
+        if (responseType !== 'json' && typeof responseData === 'string') {
+          responseData = JSON.parse(responseData || '');
+        }
       } catch (e) {
         _handleXhrError(observer, 'invalid json', e);
       }

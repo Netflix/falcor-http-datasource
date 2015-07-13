@@ -1,5 +1,5 @@
 'use strict';
-var Observable = require('falcor').Observable;
+var Observable = require('rx/dist/rx').Observable;
 var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;

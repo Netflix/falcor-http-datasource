@@ -1,41 +1,33 @@
 {
   "name": "falcor-browser",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "This package contains falcor components for use in browsers.",
   "main": "src/XMLHttpSource.js",
   "homepage": "https://github.com/Netflix/falcor-browser",
-  "author": {
-    "name": "Netflix",
-    "url": "https://github.com/Netflix/falcor-browser/authors.txt"
-  },
+  "author": "Michael Brady Paulson <michael.b.paulson@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Netflix/falcor-browser.git"
+    "url": "git://github.com/Netflix/falcor-browser.git"
   },
   "licenses": [
     {
       "type": "Apache License, Version 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
-  ],  
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/Netflix/falcor-browser.git"
   },
   "keywords": [
     "Falcor",
     "Browser"
   ],
   "dependencies": {
-    "falcor": "git+ssh://git@github.com/Netflix/falcor.git"
+    "falcor": "git+ssh://git@github.com/Netflix/falcor.git",
+    "rx": "2.5.3"
   },
-  "author": "Michael Brady Paulson <michael.b.paulson@gmail.com>",
   "license": "ALV2",
   "bugs": {
     "url": "https://github.com/Netflix/falcor-browser/issues"
-  },
-  "homepage": "https://github.com/Netflix/falcor-browser"
+  }
 }

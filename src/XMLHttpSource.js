@@ -56,7 +56,7 @@ XMLHttpSource.prototype = {
   set: function httpSourceSet(jsongEnv) {
     var method = 'POST';
     var queryObject = this.buildQueryObject(this._jsongUrl, method, {
-      jsong: jsongEnv,
+      jsonGraph: jsongEnv,
       method: 'set'
     });
     var config = simpleExtend(queryObject, this._config);

@@ -60,6 +60,8 @@ XMLHttpSource.prototype = {
       method: 'set'
     });
     var config = simpleExtend(queryObject, this._config);
+    config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    
     // pass context for onBeforeRequest callback
     var context = this;
     return request(method, config, context);
@@ -85,6 +87,8 @@ XMLHttpSource.prototype = {
 
     var queryObject = this.buildQueryObject(this._jsongUrl, method, queryData.join('&'));
     var config = simpleExtend(queryObject, this._config);
+    config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    
     // pass context for onBeforeRequest callback
     var context = this;
     return request(method, config, context);

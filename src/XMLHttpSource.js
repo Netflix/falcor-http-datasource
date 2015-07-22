@@ -1,6 +1,4 @@
 'use strict';
-var falcor = require('falcor');
-
 var request = require('./request');
 var buildQueryObject = require('./buildQueryObject');
 var isArray = Array.isArray;

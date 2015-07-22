@@ -6,19 +6,19 @@ var hasOwnProp = Object.prototype.hasOwnProperty;
 function Observable() {}
 
 Observable.create = function(subscribe) {
-    var o = new Observable();
-    o.subscribe = function(observer) {
-        var s = subscribe(observer);
-        if (typeof s === 'function') {
-            return {
-                dispose: s
-            };
-        }
-        else {
-            return s;
-        }
+  var o = new Observable();
+  o.subscribe = function(observer) {
+    var s = subscribe(observer);
+    if (typeof s === 'function') {
+      return {
+        dispose: s
+      };
     }
-    return o;
+    else {
+      return s;
+    }
+  }
+  return o;
 }
 
 function request(method, options, context) {
@@ -161,7 +161,10 @@ function onXhrLoad(observer, xhr, status, e) {
 
     if (status >= 200 && status <= 399) {
       try {
-        if (responseType !== 'json' && typeof responseData === 'string') {
+        if (responseType !== 'json') {
+          responseData = JSON.parse(responseData || '');
+        }
+        if (typeof responseData === 'string') {
           responseData = JSON.parse(responseData || '');
         }
       } catch (e) {

@@ -1,5 +1,5 @@
 'use strict';
-var XMLHttpRequest = require('xmlhttprequest');
+var xhr = require('xmlhttprequest');
 module.exports = function getXMLHttpRequest() {
-  return new XMLHttpRequest();
+  return new xhr.XMLHttpRequest();
 };

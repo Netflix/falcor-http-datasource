@@ -102,7 +102,7 @@ function request(method, options, context) {
         if (xhr.readyState === 4) {
           if (!isDone) {
             isDone = true;
-            onXhrLoad(observer, xhr, status, e);
+            onXhrLoad(observer, xhr, e);
           }
         }
       };
@@ -144,7 +144,7 @@ function _handleXhrError(observer, textStatus, errorThrown) {
   observer.onError(errorThrown);
 }
 
-function onXhrLoad(observer, xhr, status, e) {
+function onXhrLoad(observer, xhr, e) {
   var responseData,
     responseObject,
     responseType;

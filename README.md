@@ -1,5 +1,6 @@
-# Falcor Browser
+# HttpDataSource
 
+This is a Data source which can be used to retrieve JSON Graph information from an HTTP server.
 
 ## Usage
 Minimalistic ES6 example

@@ -6,10 +6,10 @@ Minimalistic ES6 example
 
 ```es6
 import falcor from 'falcor';
-import XMLHttpSource from 'falcor-browser';
+import HttpDataSource from 'falcor-browser';
 import user from 'app/models/user';
 
-export class AppSource extends XMLHttpSource {
+export class AppSource extends HttpDataSource {
   constructor(path, token) {
     super(path, {
       headers: {

@@ -1,6 +1,6 @@
 {
   "name": "falcor-http-datasource",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "This package contains falcor components for use in browsers.",
   "main": "src/XMLHttpSource.js",
   "homepage": "https://github.com/Netflix/falcor-browser",

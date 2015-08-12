@@ -1,5 +1,5 @@
 {
-  "name": "falcor-browser",
+  "name": "falcor-http-datasource",
   "version": "0.1.0",
   "description": "This package contains falcor components for use in browsers.",
   "main": "src/XMLHttpSource.js",

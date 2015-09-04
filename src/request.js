@@ -3,11 +3,23 @@ var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;
 
+var noop = function() {};
+
 function Observable() {}
 
 Observable.create = function(subscribe) {
   var o = new Observable();
+
   o.subscribe = function(observer) {
+
+    if (typeof observer === 'function') {
+        observer = {
+            onNext: observer,
+            onError: (arguments[1] || noop),
+            onCompleted: (arguments[2] || noop)
+        };
+    }
+
     var s = subscribe(observer);
     if (typeof s === 'function') {
       return {
@@ -17,12 +29,13 @@ Observable.create = function(subscribe) {
     else {
       return s;
     }
-  }
+  };
   return o;
-}
+};
 
 function request(method, options, context) {
   return Observable.create(function requestObserver(observer) {
+
     var config = {
       method: method || 'GET',
       crossDomain: false,
@@ -30,6 +43,7 @@ function request(method, options, context) {
       headers: {},
       responseType: 'json'
     };
+
     var xhr,
       isDone,
       headers,
@@ -91,7 +105,7 @@ function request(method, options, context) {
           //
           // The json response type can be ignored if not supported, because JSON payloads are
           // parsed on the client-side regardless.
-          if (responseType !== 'json') {
+          if (config.responseType !== 'json') {
             throw e;
           }
         }

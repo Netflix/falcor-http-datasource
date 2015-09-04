@@ -10,26 +10,32 @@ function Observable() {}
 Observable.create = function(subscribe) {
   var o = new Observable();
 
-  o.subscribe = function(observer) {
+  o.subscribe = function(onNext, onError, onCompleted) {
 
-    if (typeof observer === 'function') {
+    var observer;
+    var disposable;
+
+    if (typeof onNext === 'function') {
         observer = {
-            onNext: observer,
-            onError: (arguments[1] || noop),
-            onCompleted: (arguments[2] || noop)
+            onNext: onNext,
+            onError: (onError || noop),
+            onCompleted: (onCompleted || noop)
         };
+    } else {
+        observer = onNext;
     }
 
-    var s = subscribe(observer);
-    if (typeof s === 'function') {
+    disposable = subscribe(observer);
+
+    if (typeof disposable === 'function') {
       return {
-        dispose: s
+        dispose: disposable
       };
-    }
-    else {
-      return s;
+    } else {
+      return disposable;
     }
   };
+
   return o;
 };
 

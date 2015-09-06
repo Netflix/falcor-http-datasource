@@ -1,5 +1,7 @@
 'use strict';
 var xhr = require('xmlhttprequest');
 module.exports = function getXMLHttpRequest() {
-  return new xhr.XMLHttpRequest();
+  var request = new xhr.XMLHttpRequest();
+  request.setDisableHeaderCheck(true);
+  return request;
 };

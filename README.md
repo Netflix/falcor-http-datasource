@@ -2,13 +2,25 @@
 
 This is a Falcor DataSource which can be used to retrieve JSON Graph information from an HTTP server.
 
+## Install
+```
+npm i falcor-http-datasource
+```
+
 ## Usage
-Minimalistic ES6 example
+
+Minimalistic ES6 example, a quick dirty setup
 
 ```es6
 import falcor from 'falcor';
-import HttpDataSource from 'falcor-browser';
+import HttpDataSource from 'falcor-http-datasource';
 import user from 'app/models/user';
+
+var model = new falcor.Model({source: new HttpDataSource('/model.json')});
+```
+or you might want to pass it to constructor
+
+```es6
 
 export class AppSource extends HttpDataSource {
   constructor(path, token) {

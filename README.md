@@ -7,7 +7,7 @@ Minimalistic ES6 example
 
 ```es6
 import falcor from 'falcor';
-import HttpDataSource from 'falcor-browser';
+import HttpDataSource from 'falcor-http-datasource';
 import user from 'app/models/user';
 
 export class AppSource extends HttpDataSource {

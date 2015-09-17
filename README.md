@@ -3,8 +3,8 @@
 This is a Falcor DataSource which can be used to retrieve JSON Graph information from an HTTP server.
 
 ## Install
-```
-npm i falcor-http-datasource
+```bash
+npm install falcor-http-datasource
 ```
 
 ## Usage
@@ -16,9 +16,34 @@ import falcor from 'falcor';
 import HttpDataSource from 'falcor-http-datasource';
 import user from 'app/models/user';
 
-var model = new falcor.Model({source: new HttpDataSource('/model.json')});
+var model = new falcor.Model({
+  source: new HttpDataSource('/model.json')
+});
 ```
-or you might want to pass it to constructor
+If you need some additional info for your global HTTP requests consider something like
+
+JWT
+```javascript
+var source = new HttpDataSource('/model.json', {
+  headers: {
+    'Authorization': `bearer ' + token`
+  }
+});
+```
+Cookies
+```javascript
+var source = new HttpDataSource('/model.json', {
+  withCredentials: true
+});
+// server must include the header `Access-Control-Allow-Credentials: true`
+```
+CORS
+```javascript
+var source = new HttpDataSource('/model.json', {
+  crossDomain: true
+});
+```
+or you might want to pass it to constructor as your global AppSource
 
 ```es6
 

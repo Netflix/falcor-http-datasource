@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "description": "This package contains falcor components for use in browsers.",
   "main": "src/XMLHttpSource.js",
-  "homepage": "https://github.com/Netflix/falcor-browser",
+  "homepage": "https://github.com/Netflix/falcor-http-datasource",
   "browser": {
     "./src/getXMLHttpRequest.js": "./src/getXMLHttpRequest.browser.js"
   },
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/Netflix/falcor-browser.git"
+    "url": "git://github.com/Netflix/falcor-http-datasource.git"
   },
   "licenses": [
     {
@@ -36,7 +36,7 @@
   },
   "license": "ALV2",
   "bugs": {
-    "url": "https://github.com/Netflix/falcor-browser/issues"
+    "url": "https://github.com/Netflix/falcor-http-datasource/issues"
   },
   "devDependencies": {
     "browserify": "^11.0.0",

@@ -14,7 +14,6 @@ Minimalistic ES6 example, a quick dirty setup
 ```es6
 import falcor from 'falcor';
 import HttpDataSource from 'falcor-http-datasource';
-import user from 'app/models/user';
 
 var model = new falcor.Model({
   source: new HttpDataSource('/model.json')

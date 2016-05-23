@@ -1,6 +1,7 @@
 'use strict';
 var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
+var simpleExtend = require('./simpleExtend');
 var hasOwnProp = Object.prototype.hasOwnProperty;
 
 var noop = function() {};
@@ -155,13 +156,19 @@ function request(method, options, context) {
 /*
  * General handling of ultimate failure (after appropriate retries)
  */
-function _handleXhrError(observer, textStatus, errorThrown) {
+function _handleXhrError(observer, status, errorThrown) {
   // IE9: cross-domain request may be considered errors
-  if (!errorThrown) {
-    errorThrown = new Error(textStatus);
+  var error = errorThrown
+  if (!error || !error.stack) {
+    error = new Error(
+      errorThrown ? (errorThrown.message || errorThrown) : status
+    );
   }
+  error.status = status;
 
-  observer.onError(errorThrown);
+  simpleExtend(error, errorThrown || {});
+
+  observer.onError(error);
 }
 
 function onXhrLoad(observer, xhr, e) {
@@ -188,7 +195,7 @@ function onXhrLoad(observer, xhr, e) {
           responseData = JSON.parse(responseData || '');
         }
       } catch (e) {
-        _handleXhrError(observer, 'invalid json', e);
+        _handleXhrError(observer, status, e);
       }
       observer.onNext(responseData);
       observer.onCompleted();
@@ -196,19 +203,19 @@ function onXhrLoad(observer, xhr, e) {
 
     } else if (status === 401 || status === 403 || status === 407) {
 
-      return _handleXhrError(observer, responseData);
+      return _handleXhrError(observer, status, responseData);
 
     } else if (status === 410) {
       // TODO: Retry ?
-      return _handleXhrError(observer, responseData);
+      return _handleXhrError(observer, status, responseData);
 
     } else if (status === 408 || status === 504) {
       // TODO: Retry ?
-      return _handleXhrError(observer, responseData);
+      return _handleXhrError(observer, status, responseData);
 
     } else {
 
-      return _handleXhrError(observer, responseData || ('Response code ' + status));
+      return _handleXhrError(observer, status, responseData || ('Response code ' + status));
 
     }//if
   }//if

@@ -1,15 +1,8 @@
 'use strict';
 var request = require('./request');
 var buildQueryObject = require('./buildQueryObject');
+var simpleExtend = require('./simpleExtend');
 var isArray = Array.isArray;
-
-function simpleExtend(obj, obj2) {
-  var prop;
-  for (prop in obj2) {
-    obj[prop] = obj2[prop];
-  }
-  return obj;
-}
 
 function XMLHttpSource(jsongUrl, config) {
   this._jsongUrl = jsongUrl;
@@ -59,7 +52,7 @@ XMLHttpSource.prototype = {
     });
     var config = simpleExtend(queryObject, this._config);
     config.headers["Content-Type"] = "application/x-www-form-urlencoded";
-    
+
     // pass context for onBeforeRequest callback
     var context = this;
     return request(method, config, context);
@@ -86,7 +79,7 @@ XMLHttpSource.prototype = {
     var queryObject = this.buildQueryObject(this._jsongUrl, method, queryData.join('&'));
     var config = simpleExtend(queryObject, this._config);
     config.headers["Content-Type"] = "application/x-www-form-urlencoded";
-    
+
     // pass context for onBeforeRequest callback
     var context = this;
     return request(method, config, context);

@@ -29,6 +29,14 @@ var source = new HttpDataSource('/model.json', {
   }
 });
 ```
+POST JSON
+```javascript
+var source = new HttpDataSource('/model.json', {
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+```
 Cookies
 ```javascript
 var source = new HttpDataSource('/model.json', {

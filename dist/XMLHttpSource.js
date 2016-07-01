@@ -54,11 +54,23 @@ XMLHttpSource.prototype = {
    */
   set: function httpSourceSet(jsongEnv) {
     var method = 'POST';
-    var queryObject = this.buildQueryObject(this._jsongUrl, method, {
-      jsong: jsongEnv,
-      method: 'set'
-    });
-    var config = simpleExtend(queryObject, this._config);
+    var config, queryObject;
+    if (!this._config.headers || !this._config.headers["Content-Type"] || !this._config.headers["Content-Type"].match(/application\/json/)) {
+      queryObject = this.buildQueryObject(this._jsongUrl, method, {
+        jsonGraph: jsongEnv,
+        method: 'set'
+      });
+      config = simpleExtend(queryObject, this._config);
+      config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    } else {
+      config = simpleExtend({
+        url: this._jsongUrl,
+        data: JSON.stringify({
+          jsonGraph: JSON.stringify(jsongEnv),
+          method: 'set'
+        })
+      }, this._config);
+    }
     // pass context for onBeforeRequest callback
     var context = this;
     return request(method, config, context);
@@ -75,15 +87,29 @@ XMLHttpSource.prototype = {
     paths = paths || [];
 
     var method = 'POST';
-    var queryData = [];
-    queryData.push('method=call');
-    queryData.push('callPath=' + encodeURIComponent(JSON.stringify(callPath)));
-    queryData.push('arguments=' + encodeURIComponent(JSON.stringify(args)));
-    queryData.push('pathSuffixes=' + encodeURIComponent(JSON.stringify(pathSuffix)));
-    queryData.push('paths=' + encodeURIComponent(JSON.stringify(paths)));
+    var config, queryData = [], queryObject;
+    if (!this._config.headers || !this._config.headers["Content-Type"] || !this._config.headers["Content-Type"].match(/application\/json/)) {
+      queryData.push('method=call');
+      queryData.push('callPath=' + encodeURIComponent(JSON.stringify(callPath)));
+      queryData.push('arguments=' + encodeURIComponent(JSON.stringify(args)));
+      queryData.push('pathSuffixes=' + encodeURIComponent(JSON.stringify(pathSuffix)));
+      queryData.push('paths=' + encodeURIComponent(JSON.stringify(paths)));
 
-    var queryObject = this.buildQueryObject(this._jsongUrl, method, queryData.join('&'));
-    var config = simpleExtend(queryObject, this._config);
+      queryObject = this.buildQueryObject(this._jsongUrl, method, queryData.join('&'));
+      config = simpleExtend(queryObject, this._config);
+      config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    } else {
+      config = simpleExtend({
+        url: this._jsongUrl,
+        data: JSON.stringify({
+          method: 'call',
+          callPath: JSON.stringify(callPath),
+          arguments: JSON.stringify(args),
+          pathSuffixes: JSON.stringify(pathSuffix),
+          paths: JSON.stringify(paths)
+        })
+      }, this._config);
+    }
     // pass context for onBeforeRequest callback
     var context = this;
     return request(method, config, context);
@@ -111,7 +137,7 @@ module.exports = function buildQueryObject(url, method, queryData) {
     keys = Object.keys(queryData);
     keys.forEach(function (k) {
       var value = (typeof queryData[k] === 'object') ? JSON.stringify(queryData[k]) : queryData[k];
-      qData.push(k + '=' + value);
+      qData.push(k + '=' + encodeURIComponent(value));
     });
   }
 
@@ -174,26 +200,45 @@ var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;
 
+var noop = function() {};
+
 function Observable() {}
 
 Observable.create = function(subscribe) {
   var o = new Observable();
-  o.subscribe = function(observer) {
-    var s = subscribe(observer);
-    if (typeof s === 'function') {
+
+  o.subscribe = function(onNext, onError, onCompleted) {
+
+    var observer;
+    var disposable;
+
+    if (typeof onNext === 'function') {
+        observer = {
+            onNext: onNext,
+            onError: (onError || noop),
+            onCompleted: (onCompleted || noop)
+        };
+    } else {
+        observer = onNext;
+    }
+
+    disposable = subscribe(observer);
+
+    if (typeof disposable === 'function') {
       return {
-        dispose: s
+        dispose: disposable
       };
+    } else {
+      return disposable;
     }
-    else {
-      return s;
-    }
-  }
+  };
+
   return o;
-}
+};
 
 function request(method, options, context) {
   return Observable.create(function requestObserver(observer) {
+
     var config = {
       method: method || 'GET',
       crossDomain: false,
@@ -201,6 +246,7 @@ function request(method, options, context) {
       headers: {},
       responseType: 'json'
     };
+
     var xhr,
       isDone,
       headers,
@@ -262,7 +308,7 @@ function request(method, options, context) {
           //
           // The json response type can be ignored if not supported, because JSON payloads are
           // parsed on the client-side regardless.
-          if (responseType !== 'json') {
+          if (config.responseType !== 'json') {
             throw e;
           }
         }
@@ -273,7 +319,7 @@ function request(method, options, context) {
         if (xhr.readyState === 4) {
           if (!isDone) {
             isDone = true;
-            onXhrLoad(observer, xhr, status, e);
+            onXhrLoad(observer, xhr, e);
           }
         }
       };
@@ -315,7 +361,7 @@ function _handleXhrError(observer, textStatus, errorThrown) {
   observer.onError(errorThrown);
 }
 
-function onXhrLoad(observer, xhr, status, e) {
+function onXhrLoad(observer, xhr, e) {
   var responseData,
     responseObject,
     responseType;
@@ -332,7 +378,10 @@ function onXhrLoad(observer, xhr, status, e) {
 
     if (status >= 200 && status <= 399) {
       try {
-        if (responseType !== 'json' && typeof responseData === 'string') {
+        if (responseType !== 'json') {
+          responseData = JSON.parse(responseData || '');
+        }
+        if (typeof responseData === 'string') {
           responseData = JSON.parse(responseData || '');
         }
       } catch (e) {

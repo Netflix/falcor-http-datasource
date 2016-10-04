@@ -2,10 +2,15 @@
 var getXMLHttpRequest = require('./getXMLHttpRequest');
 var getCORSRequest = require('./getCORSRequest');
 var hasOwnProp = Object.prototype.hasOwnProperty;
-
+var Symbol = require('./SymbolShim');
+var toEsObservable = require('./toEsObservable');
 var noop = function() {};
 
 function Observable() {}
+
+Observable.prototype[Symbol.observable] = function () {
+    return toEsObservable(this);
+};
 
 Observable.create = function(subscribe) {
   var o = new Observable();

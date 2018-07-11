@@ -12,6 +12,13 @@ module.exports = function buildQueryObject(url, method, queryData) {
 
     keys = Object.keys(queryData);
     keys.forEach(function (k) {
+      if (k === 'paths') {
+        var paths = queryData[k];
+        paths.forEach(function (p) {
+          qData.push('path=' + encodeURIComponent(JSON.stringify(p)));
+        });
+        return;
+      }
       var value = (typeof queryData[k] === 'object') ? JSON.stringify(queryData[k]) : queryData[k];
       qData.push(k + '=' + encodeURIComponent(value));
     });
